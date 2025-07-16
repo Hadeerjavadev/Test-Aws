@@ -2,7 +2,7 @@ name: Build and Deploy to EC2
 
 on:
   push:
-    branches: [ main ]  # change to master if that's your main branch
+    branches: [ master ]  # change to master if that's your main branch
 
 jobs:
   build-and-deploy:
