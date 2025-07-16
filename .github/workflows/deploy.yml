@@ -22,12 +22,17 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
+      - name: Decode PEM key
+        run: |
+          echo "${{ secrets.EC2_KEY_B64 }}" | base64 -d > key.pem
+          chmod 600 key.pem
+
       - name: Copy jar to EC2
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_KEY }}
+          key: key.pem
           port: 22
           source: target/*.jar
           target: /home/ubuntu/
@@ -37,7 +42,7 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_KEY }}
+          key: key.pem
           port: 22
           script: |
             pkill -f 'java -jar' || true
